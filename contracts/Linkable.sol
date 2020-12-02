@@ -37,7 +37,7 @@ contract Linkable {
     // _projectAmount is the amount the project needs.
     uint256 private _projectAmount;
 
-    // IdentityProject contains informations about the identity of the project.
+    // IdentityProject contains informations about the project.
     struct IdentityProject {
         uint256 _id;
         string _projectName;
@@ -93,11 +93,7 @@ contract Linkable {
         creatorAddr[addressProject_] = addressCreator_;
     }
 
-    function getProject(uint256 id_)
-        public
-        view
-        returns (IdentityProject memory)
-    {
+    function getProject(uint256 id_) public view returns (IdentityProject memory) {
         return identityProject[id_];
     }
 
