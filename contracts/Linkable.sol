@@ -10,7 +10,6 @@
 // Creator 3 : 0x6C97b80D51F0d13744419c48a9045456c82f14dA
 // Investor 3 : 0x0D2fbF2F196f5895A90eA3Ba24bAD8aE86EfA2f9
 
-
 // SPDX-License-Identifier: MIT
 pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
@@ -19,23 +18,17 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 contract Linkable {
     using SafeMath for uint256;
 
-    // _ownerLinkable: address of the owner.
-    address private _ownerLinkable;
+    // _owner: address of the owner.
+    address private _owner;
 
     // _addressProject: address of a project.
     address payable private _addressProject;
-
-    // _addressCreator: address of a project creator.
-    address private _addressCreator;
 
     // _addressInvest: address of an investor.
     address private _addressInvestor;
 
     // _projectName: string of the name of the project.
-    string private _projectName;
-
-    // _creatorName: string of the name of the creator.
-    string private _creatorName;
+    string private _nameProject;
 
     // _description: string of the description of the project.
     string private _description;
@@ -47,102 +40,119 @@ contract Linkable {
     // _id is also a project ID.
     uint256 private _id;
 
-    // _projectAmount is the amount the project needs.
-    uint256 private _projectAmount;
+    // _cost is the amount the project needs.
+    uint256 private _cost;
 
     // IdentityProject is a struct with informations about the project.
     // Declaration of the struct type.
     struct IdentityProject {
         uint256 _id;
-        string _projectName;
-        string _creatorName;
+        string _nameProject;
         string _description;
-        uint256 _projectAmount;
+        uint256 _cost;
         string _location;
     }
 
     // Declaration of the variable struct type.
-    IdentityProject IdentityProjectVar = IdentityProject (
+    IdentityProject identityProjectVar = IdentityProject (
         {
             _id : _id,
-            _projectName : _projectName,
-            _creatorName : _creatorName,
+            _nameProject : _nameProject,
             _description : _description,
-            _projectAmount : _projectAmount,
+            _cost : _cost,
             _location : _location
         }
     );
 
-    // idtProject: Mapping FROM an ID TO the struct of a project.
+    // projectAddr: Mapping from an 'id' to the 'address' affiliated with.
+    // _idProject => _addressProject
+    mapping(uint256 => address) private _projectAddr;
+
+    // projectId: Mapping from a registered project 'address' to an 'id'.
+    // _addressProject => _idProject
+    mapping(address => uint256) private _projectId;
+
+    // idtProject: Mapping from an 'id' to the 'struct' of a project.
     // _id => struct IdentityProject
-    mapping(uint256 => IdentityProject) public identityProject;
+    mapping(uint256 => IdentityProject) private identityProject;
 
-    // projectAddr: Mapping FROM an ID TO the address affiliated with.
-    // _id => _addressProject
-    mapping(uint256 => address) public projectAddr;
+    // projectName: Mapping from an 'id' to the 'name' of the project.
+    mapping(uint256 => string) private _projectName; 
 
-    // creatorAddr: Mapping FROM an project address TO its creator address.
-    // _addressProject => _addressCreator
-    mapping(address => address) public creatorAddr;
+    // projectDesc: Mapping from an 'id' to the 'description' of a project.
+    mapping(uint256 => string) private _projectDesc;
 
-    // projectId: Mapping FROM a registered project address TO an ID.
-    // _addressProject => _id
-    mapping(address => uint256) public projectId;
+    // projectCost: Mapping from an 'id' to the 'cost' of the project.
+    mapping(uint256 => uint256) private _projectCost;
+
+    // projectLoc: Mapping from an 'id' to the 'location' of a project.
+    mapping(uint256 => string) private _projectLoc;
 
     // _balance : Mapping from account addresses to current balance.
     mapping (address => uint256) private _balance;
 
     constructor() {
-        _ownerLinkable = address(0x185D07b967ACD3b2600387656153b5725ddD01D7);
+        _owner = address(0x185D07b967ACD3b2600387656153b5725ddD01D7);
         _id = 0;
-        projectAddr[_id] = _addressProject;
-        projectId[_addressProject] = _id;
-        creatorAddr[_addressProject] = _addressCreator;
+        _projectName[_id] = _nameProject;
+        _projectDesc[_id] = _description;
+        _projectCost[_id] = _cost;
+        _projectLoc[_id] = _location;
+        _projectAddr[_id] = _addressProject;
+        _projectId[_addressProject] = _id; 
     }
 
     function register(
         address payable addressProject_,
-        address addressCreator_,
-        string memory projectName_,
-        string memory creatorName_,
+        string memory nameProject_,
         string memory description_,
-        uint256 projectAmount_,
+        uint256 cost_,
         string memory location_
     ) public {
         _id = _id.add(1);
         _addressProject = addressProject_;
-        _addressCreator = addressCreator_;
-        _projectName = projectName_;
-        _creatorName = creatorName_;
+        _nameProject = nameProject_;
         _description = description_;
-        _projectAmount = projectAmount_;
+        _cost = cost_;
         _location = location_;
-        projectAddr[_id] = addressProject_;
-        projectId[addressProject_] = _id;
-        creatorAddr[addressProject_] = addressCreator_;
+        _projectAddr[_id] = addressProject_;
+        _projectId[addressProject_] = _id;
+        _projectName[_id] = nameProject_;
+        _projectDesc[_id] = description_;
+        _projectCost[_id] = cost_;
+        _projectLoc[_id] = location_;
         identityProject[_id] = IdentityProject (
          _id,
-        projectName_,
-        creatorName_,
+        nameProject_,
         description_,
-        projectAmount_,
+        cost_,
         location_
         );
+    }
+
+    function getProjectId(address addr_) public view returns (uint256) {
+        return _projectId[addr_]; 
     }
 
     function getProject(uint256 id_) public view returns (IdentityProject memory) {
         return identityProject[id_];
     }
 
-    // donate() moves `projectAmount_` eth from the caller's account to `addressProject_`.
-    // Returns a boolean value indicating whether the operation succeeded.
-    function donate(address addressProject_, uint256 projectAmount_) public returns (bool) {
-        require(_balance[msg.sender] >= projectAmount_, 'Linkable : Transfer amount exceeds balance');
-        _balance[msg.sender] = _balance[msg.sender].sub(projectAmount_.mul(1**18 wei));
-        _balance[addressProject_] = _balance[addressProject_].add(projectAmount_.mul(1**18 wei));
-        emit Transfer(msg.sender, addressProject_, projectAmount_);
-        return true;
+    function getProjectName(uint256 id_) public view returns (string memory) {
+        return _projectName[id_];
     }
 
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    function getProjectDesc(uint256 id_) public view returns (string memory) {
+        return _projectDesc[id_];
+    }
+
+    function getProjectCost(uint256 id_) public view returns (uint256) {
+        return _projectCost[id_];
+    }
+
+    function getProjectLoc(uint256 id_) public view returns (string memory) {
+        return _projectLoc[id_];
+    }
+
+    // event Transfer(address indexed _from, address indexed _to, uint256 _value);
 }
