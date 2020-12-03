@@ -17,9 +17,6 @@ contract Linkable {
     }
     // Array of demands
     DemandFromProject[] public demands;
-    
-    // Address of a creator
-    address public creatorAddr;
 
     // Address of a project
     address public projectAddr;
@@ -30,15 +27,14 @@ contract Linkable {
     // Price of a project
     uint public donation;
     
-    constructor(address projectAddr_,address creatorAddr_) payable {
+    constructor(address projectAddr_) payable {
         investorAddr = msg.sender;
         projectAddr = projectAddr_;
-        creatorAddr = creatorAddr_;
         donation = msg.value;
     }
 
-    modifier onlyCreator() {
-        require(msg.sender == creatorAddr, "Linkable : permission denied");
+    modifier onlyProject() {
+        require(msg.sender == projectAddr, "Linkable : permission denied");
         _;
     }
 
@@ -58,7 +54,7 @@ contract Linkable {
         string memory creator_,
         string memory description_,
         string memory location_,
-        uint256 amount_) public onlyCreator {
+        uint256 amount_) public onlyProject {
         DemandFromProject memory demand = DemandFromProject({
             name: name_,
             creator: creator_,
