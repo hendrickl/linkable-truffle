@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.7.5;
+pragma experimental ABIEncoderV2; 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 contract Linkable {
@@ -68,5 +69,10 @@ contract Linkable {
 
         demands.push(demand);
     }
+
+    // Returns all demands
+    function getAllDemand() public view returns (DemandFromProject[] memory) {
+        return demands;
+ }
 
 }
