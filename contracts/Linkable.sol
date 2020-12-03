@@ -49,6 +49,8 @@ contract Linkable {
         });
 
         projects.push(project);
+
+        emit Projectregistered(name_, desc_, amount_, loc_, project.raised);
     }
 
     event Projectregistered(string name, string description, uint256 amount, string location, bool raised);
