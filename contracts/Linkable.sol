@@ -28,12 +28,13 @@ contract Linkable {
     address public investorAddr;
 
     // Price of a project
-    uint public cost;
+    uint public donation;
     
-    constructor(address projectAddr_) payable {
-        creatorAddr = msg.sender;
+    constructor(address projectAddr_,address creatorAddr_) payable {
+        investorAddr = msg.sender;
         projectAddr = projectAddr_;
-        cost = msg.value;
+        creatorAddr = creatorAddr_;
+        donation = msg.value;
     }
 
     modifier onlyCreator() {
@@ -43,7 +44,7 @@ contract Linkable {
 
     // Everyone can send ethers to contract
     receive() external payable {
-        cost = cost.add(msg.value);
+        donation = donation.add(msg.value);
     }
 
     // getBalance() returns the balance of an address
