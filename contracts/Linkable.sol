@@ -4,6 +4,18 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 contract Linkable {
     using SafeMath for uint256;
+
+    // A struct for the projectAddr request
+    struct DemandFromProject {
+        string name;
+        string creator;
+        string description;
+        string location;
+        uint256 amount;
+        bool paid;
+    }
+    // Array of demands
+    DemandFromProject[] public demands;
     
     // Address of a creator
     address public creatorAddr;
