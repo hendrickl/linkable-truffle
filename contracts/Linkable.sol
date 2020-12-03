@@ -35,6 +35,11 @@ contract Linkable {
         cost = msg.value;
     }
 
+    modifier onlyCreator() {
+        require(msg.sender == creatorAddr, "Linkable : permission denied");
+        _;
+    }
+
     // Everyone can send ethers to contract
     receive() external payable {
         cost = cost.add(msg.value);
@@ -51,8 +56,7 @@ contract Linkable {
         string memory creator_,
         string memory description_,
         string memory location_,
-        uint256 amount_) public{
-        require(msg.sender == creatorAddr, "Linkable : permission denied");    
+        uint256 amount_) public onlyCreator {
         DemandFromProject memory demand = DemandFromProject({
             name: name_,
             creator: creator_,
