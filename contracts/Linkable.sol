@@ -27,5 +27,9 @@ contract Linkable {
     receive() external payable {
         cost = cost.add(msg.value);
     }
+
+    function getBalance(address addr_) public view returns (uint256) {
+        return address(addr_).balance;
+    }
     
 }
