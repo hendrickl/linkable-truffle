@@ -40,8 +40,29 @@ contract Linkable {
         cost = cost.add(msg.value);
     }
 
+    // getBalance() returns the balance of an address
     function getBalance(address addr_) public view returns (uint256) {
         return address(addr_).balance;
     }
     
+    // createDemand() creates demand and adds them in the demands array
+    function createDemand(
+        string memory name_,
+        string memory creator_,
+        string memory description_,
+        string memory location_,
+        uint256 amount_) public{
+        require(msg.sender == creatorAddr, "Linkable : permission denied");    
+        DemandFromProject memory demand = DemandFromProject({
+            name: name_,
+            creator: creator_,
+            description: description_,
+            location: location_,
+            amount: amount_,
+            paid: false
+        });
+
+        demands.push(demand);
+    }
+
 }
