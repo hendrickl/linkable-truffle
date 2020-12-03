@@ -154,5 +154,12 @@ contract Linkable {
         return _projectLoc[id_];
     }
 
+    function getBalance(address addressProject_) public view returns (uint256) {
+        return address(addressProject_).balance;
+    }
+
     // event Transfer(address indexed _from, address indexed _to, uint256 _value);
 }
+
+
+
