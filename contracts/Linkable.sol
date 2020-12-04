@@ -23,15 +23,15 @@ contract Linkable {
     DemandFromProject[] public demands;
 
     // Address of a project
-    address public projectAddr;
+    address payable public projectAddr;
 
     // Address of an investor
-    address public investorAddr;
+    address payable public investorAddr;
 
     // Price of a project
     uint public donation;
     
-    constructor(address projectAddr_) payable {
+    constructor(address payable projectAddr_) payable {
         investorAddr = msg.sender;
         projectAddr = projectAddr_;
         donation = msg.value;
@@ -39,6 +39,11 @@ contract Linkable {
 
     modifier onlyProject() {
         require(msg.sender == projectAddr, "Linkable : permission denied");
+        _;
+    }
+
+    modifier onlyInvestor() {
+        require(msg.sender == investorAddr, "Linkable : permission denied");
         _;
     }
 
@@ -80,6 +85,13 @@ contract Linkable {
     // Returns all demands
     function getAllDemand() public view returns (DemandFromProject[] memory) {
         return demands;
- }
+    }
+
+    // Returns the blocked property false with some checks
+    function unBlock(uint256 i_) public onlyInvestor {
+        DemandFromProject storage demand = demands[i_];
+        require(demand.blocked, "The demand is already unblocked");
+        demand.blocked = false;
+    }
 
 }
