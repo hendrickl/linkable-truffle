@@ -28,13 +28,13 @@ contract Linkable {
     // Address of an investor
     address payable public investorAddr;
 
-    // Price of a project
-    uint public donation;
+    // Cost of a project
+    uint public fund;
     
     constructor(address payable projectAddr_) payable {
         investorAddr = msg.sender;
         projectAddr = projectAddr_;
-        donation = msg.value;
+        fund = msg.value;
     }
 
     modifier onlyProject() {
@@ -49,7 +49,7 @@ contract Linkable {
 
     // Everyone can send ethers to contract
     receive() external payable {
-        donation = donation.add(msg.value);
+        fund = fund.add(msg.value);
     }
 
     // getBalance() returns the balance of an address
@@ -90,7 +90,7 @@ contract Linkable {
     // Returns the blocked property false with some checks
     function unBlock(uint256 i_) public onlyInvestor {
         DemandFromProject storage demand = demands[i_];
-        require(demand.blocked, "The demand is already unblocked");
+        require(demand.blocked, "Linkable : The demand is already unblocked");
         demand.blocked = false;
 
         emit unBlockedDemand(demand.blocked);
@@ -98,4 +98,18 @@ contract Linkable {
 
     // Emited when unBlock is called
     event unBlockedDemand(bool blocked);
+
+    // Transfer the funds to projectAddr 
+    function withdraw(uint256 i_) public onlyProject {
+         DemandFromProject storage demand = demands[i_];
+         require(!demand.blocked, "Linkable : permission denied");
+         require(!demand.paid, "Linkable : demande already paid");
+         projectAddr.transfer(demand.amount);
+         demand.paid = true;
+
+         emit demandPaid(projectAddr, demand.amount);
+     }
+
+     // Emited when withdraw is called
+     event demandPaid(address recipient_, uint256 amount_);
 }
