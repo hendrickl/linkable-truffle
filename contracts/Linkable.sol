@@ -16,6 +16,7 @@ contract Linkable {
         string description;
         string location;
         uint256 amount;
+        bool blocked;
         bool paid;
     }
     // Array of demands
@@ -64,11 +65,17 @@ contract Linkable {
             description: description_,
             location: location_,
             amount: amount_,
+            blocked: true,
             paid: false
         });
 
         demands.push(demand);
+
+        emit DemandCreated(name_, creator_, description_, location_, amount_, demand.blocked, demand.paid);
     }
+
+    // Emited when createDemand is called
+    event DemandCreated(string name, string creator, string description, string location, uint256 amount, bool blocked, bool paid);
 
     // Returns all demands
     function getAllDemand() public view returns (DemandFromProject[] memory) {
