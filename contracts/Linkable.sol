@@ -90,7 +90,6 @@ contract Linkable {
     // Returns the blocked property false with some checks
     function unBlock(uint256 i_) public onlyInvestor {
         DemandFromProject storage demand = demands[i_];
-        require(demand.blocked, "Linkable : The demand is already unblocked");
         demand.blocked = false;
 
         emit unBlockedDemand(demand.blocked);
