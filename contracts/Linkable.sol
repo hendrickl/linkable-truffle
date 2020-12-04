@@ -28,7 +28,7 @@ contract Linkable {
     // Address of an investor
     address payable public investorAddr;
 
-    // Cost of a project
+    // fund from investor
     uint public fund;
     
     constructor(address payable projectAddr_) payable {
