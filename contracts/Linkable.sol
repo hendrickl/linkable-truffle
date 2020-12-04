@@ -92,6 +92,10 @@ contract Linkable {
         DemandFromProject storage demand = demands[i_];
         require(demand.blocked, "The demand is already unblocked");
         demand.blocked = false;
+
+        emit unBlockedDemand(demand.blocked);
     }
 
+    // Emited when unBlock is called
+    event unBlockedDemand(bool blocked);
 }
