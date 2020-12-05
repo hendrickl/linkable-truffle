@@ -102,7 +102,7 @@ contract Linkable {
     function withdraw(uint256 i_) public onlyProject {
          DemandFromProject storage demand = demands[i_];
          require(!demand.blocked, "Linkable : permission denied");
-         require(!demand.paid, "Linkable : demande already paid");
+         require(!demand.paid, "Linkable : demand already paid");
          projectAddr.transfer(demand.amount);
          demand.paid = true;
 
