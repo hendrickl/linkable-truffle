@@ -82,7 +82,7 @@ contract Linkable {
     // Emited when createDemand is called
     event DemandCreated(string name, string creator, string description, string location, uint256 amount, bool blocked, bool paid);
 
-    // Returns all demands
+    // Returns all DemandFormProject items
     function getAllDemand() public view returns (DemandFromProject[] memory) {
         return demands;
     }
