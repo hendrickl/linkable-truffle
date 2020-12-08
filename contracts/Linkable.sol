@@ -28,9 +28,9 @@ contract Linkable {
     // fund from investor
     uint256 public fund;
 
-    constructor() payable {
-        investorAddr = payable(0x65c2c71FB6b78d07dc1Adc81ecdaC7983A5572D9);
-        projectAddr = payable(0x751afF11CEDa4d298b817DF603d8F91Ce161fEA9);
+    constructor(address payable projectAddr_) payable {
+        investorAddr = msg.sender;
+        projectAddr = projectAddr_;
         fund = msg.value;
     }
 
